@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 class AbacusBead extends StatefulWidget {
    double width;
    double height;
-   Color color;
-   Color borderColor;
+   // Color color;
+   // Color borderColor;
 
     AbacusBead(
-       {Key? key,required this.width,required this.height,required this.color,required this.borderColor, }) : super(key:key);
+       {Key? key,required this.width,required this.height }) : super(key:key);
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -50,10 +50,15 @@ class _AbacusBead extends State<AbacusBead> {
 class _AbacusBeadPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
+//     // 上半梯形颜色
+//     final upperColor = Color.fromRGBO(200, 180, 160,1)!;
+// // 下半梯形颜色
+//     final lowerColor = Color.fromRGBO(180, 160, 140,1)!;
+
     // 上半梯形颜色
-    final upperColor = Color.fromRGBO(200, 180, 160,1)!;
+final upperColor = Color.fromRGBO(205, 175, 149,1)!;
 // 下半梯形颜色
-    final lowerColor = Color.fromRGBO(180, 160, 140,1)!;
+final lowerColor = Color.fromRGBO(195, 165, 139,1)!;
 
     // 绘制上半梯形（位置调整）
     final upperPath = Path()
