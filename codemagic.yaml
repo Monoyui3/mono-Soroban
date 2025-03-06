@@ -1,0 +1,13 @@
+workflows:
+  ios-workflow:
+    name: iOS Release Build
+    environment:
+      vars:
+        BUNDLE_ID: Mono7.Soroban
+    scripts:
+      - name: Install Pods
+        script: pod install
+      - name: Build IPA
+        script: xcodebuild -workspace MyApp.xcworkspace -scheme MyApp -archivePath build/MyApp.xcarchive archive
+    artifacts:
+      - build/MyApp.ipa
