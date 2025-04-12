@@ -4,11 +4,8 @@ workflows:
     instance_type: mac_mini_m1
     max_build_duration: 120
     environment:
-      # 使用稳定版本的 Flutter
       flutter: stable
-      # 使用最新的 Xcode 版本
       xcode: latest
-      # 使用默认的 CocoaPods 版本
       cocoapods: default
     scripts:
       - name: Fetch dependencies
@@ -16,20 +13,16 @@ workflows:
       - name: Build iOS app
         script: |
           cd ios
-          # 清理 pod 缓存并更新
           pod repo update
           pod cache clean --all
-          # 执行 pod install 并处理错误
           if ! pod install; then
             echo "Pod install failed"
             exit 1
           fi
           cd ..
-          # 明确指定构建 iOS 应用并输出到 ipa 目录
-          flutter build ios --release --no-codesign --output=build/ios/ipa
+          flutter build ios --release --no-codesign
       - name: Build macOS app
         script: |
-          # 明确指定构建 macOS 应用并输出到指定目录
           flutter build macos --release --output=build/macos/Build/Products/Release
     artifacts:
       - build/ios/ipa/*.ipa
@@ -41,3 +34,4 @@ workflows:
         notify:
           success: true
           failure: true
+    
