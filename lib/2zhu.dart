@@ -22,8 +22,6 @@ class _LinkedDraggableContainersState2 extends State<LinkedDraggableContainers2>
   List<double> offsets = [0,0];
   @override
   void initState() {
-    print("xixixixiixix");
-    print(zzheight);
 
     _updateOffsets();
   }
@@ -46,23 +44,20 @@ class _LinkedDraggableContainersState2 extends State<LinkedDraggableContainers2>
   // }
   void _updateOffsets() {
     zzheight = widget.zzheight;
-    print("zzzheight ${zzheight}");
+
     initOffsets[0] = zzheight;
     initOffsets[1] = zzheight * 2;
     offsets[0] = zzheight;
     offsets[1] = zzheight * 2;
-    print("xixixixiixix");
-    print(zzheight);
+
   }
 
 
   @override
   Widget build(BuildContext context) {
-    print("2zhubuild");
-    print(offsets);
-    print(initOffsets);
+
     if(widget.counterPro.chu) {
-      print("eee");
+
       for(int i =0; i < 2; i++) {
           offsets[i] = initOffsets[i];
       }
@@ -73,7 +68,7 @@ class _LinkedDraggableContainersState2 extends State<LinkedDraggableContainers2>
         offsets[i] = kz[i] == true? initOffsets[i]-zzheight: initOffsets[i];
       }
     }
-    print(offsets);
+
     return Stack(
       children: [
         const VerticalBeam(),
@@ -90,8 +85,7 @@ class _LinkedDraggableContainersState2 extends State<LinkedDraggableContainers2>
       selector: (ctx, provider) => provider,
       shouldRebuild: (pre, next) => false,
       builder: (ctx, counterPro, child) {
-        print("hhhhh");
-        print(offsets);
+
         return AnimatedPositioned(
           key: key,
           left: 0,
@@ -109,8 +103,7 @@ class _LinkedDraggableContainersState2 extends State<LinkedDraggableContainers2>
   }
 
   void _handleDrag(int index, double deltaY) {
-    print(deltaY);
-    print(offsets);
+
     setState(() {
       // 更新当前 Container 位置（限制在父容器范围内）
       double newOffset = (offsets[index] - deltaY).clamp(initOffsets[index]-zzheight,initOffsets[index]);

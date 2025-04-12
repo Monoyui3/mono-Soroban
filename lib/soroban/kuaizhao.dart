@@ -39,8 +39,6 @@ class kzArrayProvider extends ChangeNotifier {
     }
     currentArray = newArray;
     setKzClick();
-    print("111111");
-    print(currentArray);
     notifyListeners();
   }
 }

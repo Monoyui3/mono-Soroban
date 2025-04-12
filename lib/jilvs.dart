@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertest/soroban/LoginProvider.dart';
 import 'package:fluttertest/soroban/kuaizhao.dart';
 import 'package:fluttertest/soroban/stateProvider.dart';
+import 'package:fluttertest/util.dart';
 import 'package:provider/provider.dart';
 
 class reCodes extends StatefulWidget {
@@ -12,6 +14,23 @@ class reCodes extends StatefulWidget {
 }
 
 class reCodesState extends State<reCodes> {
+  bool canAdd(CountProvider counterPro) {
+    bool res = true;
+    for(int i =0; i<13;i++) {
+      int wei = 0;
+      for(int j=0;j<7;j++) {
+        if(j<5) {
+          wei +=  counterPro.array[i][j] ? 1 : 0;
+        } else {
+          wei +=  counterPro.array[i][j] ? 5 : 0;
+        }
+      }
+      if(wei>=10) {
+        res = false;
+      }
+    }
+    return res;
+  }
   String getValue(CountProvider counterPro) {
     String res = "";
     for(int i =0; i<13;i++) {
@@ -59,7 +78,8 @@ class reCodesState extends State<reCodes> {
                                 tileColor: Colors.black12,
                                 title:  Text(counterPro.values[index].replaceFirst(RegExp(r'^0+'), '')),
                                 trailing: IconButton(
-                                    onPressed: (){
+                                    onPressed: () async {
+                                      await counterPro.deleteValuesAndKzArrayToSql(index, Provider.of<LoginProvider>(context, listen: false).token );
                                       counterPro.deleteValue(index);
                                     },
                                     icon: Icon(
@@ -67,8 +87,6 @@ class reCodesState extends State<reCodes> {
                                     )),
                                 onTap: () {
                                   counterPro.hositoryClicked(index);
-                                  print("tab 点击 哈哈哈哈");
-                                  print(counterPro.array);
                                   kzPro.setCurrentArray(counterPro.array);
                                 },
                               ),
@@ -77,15 +95,24 @@ class reCodesState extends State<reCodes> {
                           Align(
                             alignment:  Alignment.centerLeft,
                             child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  String res = getValue(counterPro);
-                                  if(counterPro.values.length == 0 ||(counterPro.values.length > 0 && res != counterPro.values[counterPro.values.length -1])) {
-                                    counterPro.values.add(res);
-                                    counterPro.updateKzArrayValue();
+                              onTap: () async {
+                                if(!canAdd(counterPro)) {
+                                  Utils.showMessage(ctx, '注意进位');
+                                  return;
+                                }
+                                String res = getValue(counterPro);
+                                if(int.parse(res) == 0) return;
+                                if(counterPro.values.length == 0 ||(counterPro.values.length > 0 && res != counterPro.values[counterPro.values.length -1])) {
+                                  bool success = await counterPro.addValuesAndKzArrayToSql(Provider.of<LoginProvider>(context, listen: false).token, context, res);
+                                  print("success::::$success");
+                                  if(success) {
+                                    setState(() {
+                                      counterPro.values.add(res);
+                                      counterPro.updateKzArrayValue();
+                                    });
                                   }
+                                }
 
-                                });
                               },
                               child: Container(
                                 width: 50,

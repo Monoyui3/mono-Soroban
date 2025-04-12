@@ -1,125 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertest/soroban/LoginProvider.dart';
 import 'package:fluttertest/soroban/kuaizhao.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'Page_Login.dart';
+import 'Page_Soroban.dart';
 import 'soroban.dart';
 import './value.dart';
 import './soroban/stateProvider.dart';
 import 'soroban/ChuProvider.dart';
 import 'jilvs.dart';
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeRight,
-    DeviceOrientation.landscapeLeft,
-  ]);
+  bool hasToken = await checkLoginStatus();
 
+  LoginProvider loginProvider = LoginProvider();
+  if(hasToken) {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    loginProvider.setToken(token!);
+  }
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (ctx) => CountProvider()),
       ChangeNotifierProvider(create: (ctx) => ChuProvider()),
       ChangeNotifierProvider(create: (ctx) => kzArrayProvider()),
+      ChangeNotifierProvider.value(value: loginProvider),
     ],
     child: MaterialApp(
-      home: Builder(
-        builder: (context){
-          return Scaffold(
-            appBar: PreferredSize(
-              preferredSize: Size.fromHeight(1.0),
-              child: AppBar(),
-            ),
-            body: Stack(
-              children: [
-                Center(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
-                      child: AbacusApp(),
-                    )
-                ),
-                Builder(
-                  builder:  (innerContext){
-                    return Positioned(
-                      left: -10,
-                      child: IconButton(
-                        icon: const Icon(Icons.menu),
-                        onPressed: () {
-                          Scaffold.of(innerContext).openEndDrawer();
-                        },
-                      ),
-                    );
-                  },
-                )
-              ],
-            ),
-            endDrawer: Drawer(
-              child: Column(
-                children: [
-                  Container(
-                    height: 50, // 设置高度
-                    decoration: BoxDecoration(
-                      color: Colors.blueGrey,
-                    ),
-                    child: const Center(
-                      child: Text('历史记录'),
-                    ),
-                  ),
-                  Expanded(
-                    // child: reCodes(),
-                    child: ListView(
-                      padding: EdgeInsets.zero,
-                      children: [
-                        reCodes(),
-                      ],
-                    ),
-                  )
-                ]
-
-              ),
-            ),
-
-            bottomNavigationBar: Container(
-              padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
-              height: 25,
-              child: const ValueWidget(),
-            ),
-            floatingActionButton: Stack(
-              children: [
-                Positioned(
-                  width: 30,
-                  height: 30,
-                  bottom: 10,
-                  left: 15,
-                  child: Selector<ChuProvider, ChuProvider>(
-                    selector: (ctx,provider) => provider,
-                    shouldRebuild: (pre,next) => false,
-                    builder: (ctx, counterPro, child) {
-                      return Selector<CountProvider, CountProvider>(
-                        selector: (ctx,provider) => provider,
-                        shouldRebuild: (pre,next) => false,
-                        builder: (ctx, x, c){
-                          return FloatingActionButton(
-
-                            child: child,
-                            onPressed: () {
-                              x.setOffsetsArray();
-                              counterPro.setChu();
-                            },
-                          );
-                        },
-                      );
-                    },
-                    child: Icon(
-                      Icons.refresh,
-                      size: 30,
-                    ),
-                  ),
-                )
-              ],
-            ),
-
-          );
-        },
-      ),
+      initialRoute: hasToken ? "/main" : '/',
+      routes: {
+        "/": (ctx) =>  Page_Login(),
+        '/main': (ctx) => Page_Soroban()
+      },
     ),
+
   ));
+}
+
+Future<bool> checkLoginStatus() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  if (isLoggedIn) {
+    int loginTime = prefs.getInt('loginTime') ?? 0;
+    DateTime currentTime = DateTime.now();
+    DateTime lastLoginTime = DateTime.fromMillisecondsSinceEpoch(loginTime);
+    Duration duration = currentTime.difference(lastLoginTime);
+    if (duration.inHours < 1000) {
+      return true;
+    } else {
+      prefs.setBool('isLoggedIn', isLoggedIn);
+      prefs.setString('token', "");
+      return false;
+    }
+  }
+  return false;
 }

@@ -25,10 +25,8 @@ class AbacusAppState extends State<AbacusApp> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      print("真能来吗mout");
-      print(mounted);
+
       if (mounted) {
-        print("真能来吗");
         setState(() {
           if (_firstExpandedKey.currentContext != null) {
             final renderObject = _firstExpandedKey.currentContext!.findRenderObject();
@@ -49,7 +47,6 @@ class AbacusAppState extends State<AbacusApp> {
 
   @override
   Widget build(BuildContext context) {
-    print("soroban  rebuild  nonononononno");
     return  Container(
       decoration: BoxDecoration(
         border: Border(
@@ -78,8 +75,6 @@ class AbacusAppState extends State<AbacusApp> {
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
                 zzheight = constraints.maxHeight / 3;
-                print("constraints");
-                print(zzheight);
                 double zzwidth = constraints.maxWidth / 13;
                 return Container(
                   width: constraints.maxWidth,
@@ -87,10 +82,8 @@ class AbacusAppState extends State<AbacusApp> {
                   color: Colors.grey[200],
                   child: Consumer<ChuProvider>(
                       builder: (ctx, counterPro, child) {
-                        print("slector");
                         return Consumer<kzArrayProvider>(
                           builder: (ctx,kz,zk) {
-                            print("2222");
                             return Row(
                               mainAxisSize: MainAxisSize.min,
                               children: List.generate(13, (horIndex) {
@@ -130,7 +123,6 @@ class AbacusAppState extends State<AbacusApp> {
                     builder: (ctx, counterPro, child) {
                       return Consumer<kzArrayProvider>(
                         builder: (ctx,kz,zk) {
-                          print("3333");
                           return Row(
                             mainAxisSize: MainAxisSize.min,
                             children: List.generate(13, (horIndex) {
