@@ -1,13 +1,15 @@
+version: 2
 workflows:
-  ios-workflow:
-    name: iOS Release Build
+  build-ios:
+    triggers:
+      - event: push
+        branch: main
     environment:
-      vars:
-        BUNDLE_ID: Mono7.Soroban
+      xcode: latest
     scripts:
-      - name: Install Pods
-        script: pod install
-      - name: Build IPA
-        script: xcodebuild -workspace MyApp.xcworkspace -scheme MyApp -archivePath build/MyApp.xcarchive archive
+      - name: Install dependencies
+        script: flutter pub get
+      - name: Build iOS app
+        script: flutter build ipa --release
     artifacts:
-      - build/MyApp.ipa
+      - build/ios/ipa/*.ipa
