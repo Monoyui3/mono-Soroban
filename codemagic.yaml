@@ -1,0 +1,30 @@
+workflows:
+  ios-and-macos-workflow:
+    name: iOS and macOS Build
+    instance_type: mac_mini_m1
+    max_build_duration: 120
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Fetch dependencies
+        script: flutter pub get
+      - name: Build iOS app
+        script: |
+          cd ios
+          pod install
+          cd ..
+          flutter build ios --release --no-codesign
+      - name: Build macOS app
+        script: flutter build macos --release
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - build/macos/Build/Products/Release/*.app
+    publishing:
+      email:
+        recipients:
+          - your_email@example.com
+        notify:
+          success: true
+          failure: true
