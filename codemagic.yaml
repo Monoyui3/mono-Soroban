@@ -4,14 +4,12 @@ workflows:
     instance_type: mac_mini_m1
     max_build_duration: 120
     environment:
-      # 强制更新 flutter 到最新稳定版
-      flutter:
-        channel: stable
-        version: latest
+      # 使用稳定版本的 Flutter
+      flutter: stable
       # 使用最新的 Xcode 版本
       xcode: latest
-      # 强制更新 cocoapods 到最新版本
-      cocoapods: latest
+      # 使用默认的 CocoaPods 版本
+      cocoapods: default
     scripts:
       - name: Fetch dependencies
         script: flutter pub get
@@ -39,7 +37,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - 3126328684@qq.com
+          - your_email@example.com
         notify:
           success: true
           failure: true
